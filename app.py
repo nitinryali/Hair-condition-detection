@@ -8,39 +8,29 @@ import matplotlib.pyplot as plt
 model = tf.keras.models.load_model('model.pkl')
 
 # Define the labels for the classes
-labels = [ 'damage','high damage','weak damage']
+labels = ['damage', 'high damage', 'weak damage']
 
 def preprocess_image(image):
-    image = image.resize((180,180))
+    image = image.resize((180, 180))
     image_array = np.array(image)
     normalized_image_array = (image_array.astype(np.float32) / 255.0 - 0.5) * 2.0
-    return np.expand_dims(image_array, axis=0)
+    return np.expand_dims(normalized_image_array, axis=0)
 
 def app():
     st.title("Hair condition detection")
     uploaded_file = st.file_uploader('Upload a SEM(Microscopic) image', type=['jpg', 'jpeg', 'png'])
-    st.write("check out this [link](https://en.wikipedia.org/wiki/Scanning_electron_microscope) for input image and to know about SEM Images")
+    st.write("Check out this [link](https://en.wikipedia.org/wiki/Scanning_electron_microscope) for input image and to know about SEM Images")
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
 
-        preprocessed_image = preprocess_image(image)
-        predictions = model.predict(preprocessed_image)
-#         st.write(predictions)
-        predicted_label = labels[np.argmax(predictions)]
-        # Display the image and the predicted class label
-        st.write(" ")
+        st.image(image, caption='Uploaded Image', use_column_width=True)
 
-          # st.image(image,caption=predicted_label, use_column_width=True,width=200, output_format='PNG')
-        fig, ax = plt.subplots(figsize=(5, 4))
+        if st.button('Detect Hair Condition'):
+            preprocessed_image = preprocess_image(image)
+            predictions = model.predict(preprocessed_image)
+            predicted_label = labels[np.argmax(predictions)]
 
-          # Plot image
-        ax.imshow(image)
-
-          # Display plot
-        st.pyplot(fig)
-        st.write("---")
-        st.subheader("Your Hair Condition is "+predicted_label)
-        st.write("---")
+            st.subheader("Your Hair Condition is " + predicted_label)
 
 # Run the app
 if __name__ == '__main__':
