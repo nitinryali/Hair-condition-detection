@@ -25,7 +25,7 @@ def app():
 
         preprocessed_image = preprocess_image(image)
         predictions = model.predict(preprocessed_image)
-        st.write(predictions)
+#         st.write(predictions)
         predicted_label = labels[np.argmax(predictions)]
         # Display the image and the predicted class label
         st.write(" ")
